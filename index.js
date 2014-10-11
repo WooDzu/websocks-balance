@@ -19,6 +19,8 @@ var sub = redis.createClient(6379, '127.0.0.1', {});
 sub.subscribe(redisChannel);
 sub.subscribe('global');
 
+clients.setRedisClient(pub);
+
 // Setup our SockJS server and static server
 var static_serv = new node_static.Server(__dirname);
 var ws = sockjs.createServer();
@@ -39,19 +41,8 @@ sub.on('message', function(channel, message) {
 
   switch(cmd[0]) {
 
-    case '/getglobal':
-
-      clients.getLocal(function (error, clients) {
-        pub.publish(cmd[1], '/send-clients-to-client ' + cmd[2] + ' ' + redisChannel + ' '+ clients.join(","));
-      });
-      break;
-
-    case '/send-clients-to-client':
-      clients.send(cmd[1], '[' + cmd[2] + '] has: ' + cmd[3]);
-      break;
-
     case '/send':
-      clients.send(cmd[1], '[FROM ' + cmd[2] + ']' + cmd[3]);
+      clients.send(cmd[1], '[MSG] ' + cmd[2], false);
       break;
   }
 });
@@ -73,17 +64,17 @@ ws.on('connection', function(conn) {
     switch(cmd[0]) {
 
       case '/getlocal':
-        clients.getLocal(function(error, clients) {
-          conn.write("Clients: " + clients.join(", "));
-        });
+        conn.write("[LOCAL CLIENTS]: " + clients.getLocalClients().join(","));
         break;
 
       case '/getglobal':
-        pub.publish('global', '/getglobal ' + redisChannel + ' ' + conn.remoteAddress + ':' + conn.remotePort);
+        pub.hgetall('clients', function(error, data) {
+          conn.write('[GLOBAL CLIENTS]: ' + JSON.stringify(data));
+        });
         break;
 
       case '/send':
-        pub.publish(cmd[1], '/send ' + cmd[2] + ' ' + conn.remoteAddress + ':' + conn.remotePort + ' ' + cmd[3]);
+        clients.send(cmd[1], cmd[2]);
         break;
 
       default:
