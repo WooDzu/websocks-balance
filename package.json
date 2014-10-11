@@ -1,0 +1,20 @@
+{
+  "name": "loadb",
+  "author": {
+    "name": "WooDzu"
+  },
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Dev WebSocket Server",
+  "homepage": "https://github.com/WooDzu/websocks-balance",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WooDzu/websocks-balance.git"
+  },
+  "dependencies": {
+    "sockjs": "0.3.9",
+    "node-static": "~0.7.6",
+    "redis": "~0.12.1"
+  },
+  "main": "index"
+}
