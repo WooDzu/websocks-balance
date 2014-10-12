@@ -49,6 +49,8 @@ sub.on('message', function(channel, message) {
 
 ws.on('connection', function(conn) {
 
+  conn.write("[WELCOME]: " + redisChannel);
+
   // Add this client to the client list.
   clients.add(conn);
 
@@ -74,7 +76,11 @@ ws.on('connection', function(conn) {
         break;
 
       case '/send':
-        clients.send(cmd[1], cmd[2]);
+      clients.send(cmd[1], cmd[2]);
+      break;
+
+      case '/server':
+        conn.write("[WELCOME]: " + redisChannel);
         break;
 
       default:

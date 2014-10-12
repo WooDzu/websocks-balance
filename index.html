@@ -1,7 +1,5 @@
 <!doctype html>
 <html><head>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
 <style>
 .box {width: 350px; float: left; margin: 0 20px 0 20px}
 .box div, .box input {border: 1px solid;-moz-border-radius: 4px;border-radius: 4px;width: 100%;padding: 0px;margin: 5px}
@@ -19,6 +17,8 @@ body {background-color: #F0F0F0}
   <form><input autocomplete="off" placeholder="Type here..."></form>
 </div>
 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
 <script>
   // var sockjs = new SockJS('//192.168.1.65/echo');
   var sockjs = new SockJS('/echo');
@@ -37,7 +37,19 @@ body {background-color: #F0F0F0}
 
   sockjs.onopen    = function()  {print('[*] open', sockjs.protocol);};
   sockjs.onmessage = function(e) {print('[.] ', e.data);};
-  sockjs.onclose   = function()  {print('[*] close');};
+  sockjs.onclose   = function()  {
+    print('[*] close');
+
+    setTimeout(function() {
+      print('[*] reconnecting');
+      var newSockjs = new SockJS('/echo');
+      newSockjs.onopen = function() {
+        print('[*] open', sockjs.protocol);
+        sockjs = newSockj;
+      };
+
+    }, 2000);
+  };
 
   form.submit(function() {
     print('[ ] sending', inp.val());
