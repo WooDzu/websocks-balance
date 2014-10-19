@@ -81,6 +81,6 @@ Currently it will pick up the list of servers from /lib/servers.js
 
 ### TODO
 
- [ ] Load list of live servers from Redis
- [ ] Dynamicallly update list of the live servers
- [ ] Full HA solution
+ - [ ] Load list of live servers from Redis
+ - [ ] Dynamicallly update list of the live servers
+ - [ ] Full HA solution
